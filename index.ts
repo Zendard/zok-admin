@@ -10,11 +10,10 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
 	res.render("admin");
 });
-
 app.post(
 	"/add-item",
 	async (req, res, next) => {
-		console.log(req);
+		console.log(req.body);
 		const item = req.body;
 		const mongoClient = await new MongoClient(uri);
 		const db = mongoClient.db("Zok").collection("Calendar");
@@ -24,7 +23,7 @@ app.post(
 			img: item.img,
 			date: item.date,
 			time: item.timeBegin + " - " + item.timeEnd,
-			descr: item.descr,
+			descr: item.descr.replaceAll("\r\n", "<br>"),
 		});
 		await mongoClient.close();
 		next();
