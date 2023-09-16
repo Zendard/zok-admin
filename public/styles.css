@@ -8,6 +8,14 @@
 	--accent: #33d6ff;
 }
 
+form {
+	overflow: scroll;
+}
+
+input {
+	min-height: 2rem;
+}
+
 body {
 	color: var(--text);
 	background-color: var(--background);
