@@ -89,11 +89,11 @@ p {
 br {
 	content: "";
 	display: block;
-	margin-bottom: 0.2rem;
+	margin-bottom: 0rem;
 }
 
 .double {
-	margin-bottom: 0.4rem;
+	margin-bottom: 2rem;
 }
 
 a {
