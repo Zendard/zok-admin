@@ -61,7 +61,7 @@ app.post(
 				date: item.date,
 				time: item.timeBegin + " - " + item.timeEnd,
 				descr: item.descr
-					.replaceAll("\r\n\r\n", '<br class:"double">')
+					.replaceAll("\r\n\r\n", '<br class="double">')
 					.replaceAll("\r\n", "<br>"),
 				location: item.location,
 			});
