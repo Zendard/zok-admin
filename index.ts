@@ -39,7 +39,6 @@ app.get("/", getEvents, (req, res) => {
 app.post(
 	"/add-item",
 	async (req, res, next) => {
-		console.log(req.body);
 		const item = req.body;
 		const mongoClient = await new MongoClient(Bun.env.MONGODB_URI || "");
 		const db = mongoClient.db("Zok").collection("Calendar");
@@ -69,7 +68,24 @@ app.post(
 		next();
 	},
 	(req, res) => {
-		res.get("/");
+		res.redirect("/");
+	}
+);
+
+app.post(
+	"/delete-item",
+	async (req, res, next) => {
+		const item = req.body;
+		const mongoClient = await new MongoClient(Bun.env.MONGODB_URI || "");
+		const db = mongoClient.db("Zok").collection("Calendar");
+
+		console.log(item);
+		await db.deleteOne({ name: item.name });
+		await mongoClient.close();
+		next();
+	},
+	(req, res) => {
+		res.redirect("/");
 	}
 );
 
