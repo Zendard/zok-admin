@@ -9,7 +9,7 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
-	const auth = { login: "marten", password: "studio54" }; // change this
+	const auth = { login: "marten", password: "studio54" };
 
 	const b64auth = (req.headers.authorization || "").split(" ")[1] || "";
 	const [login, password] = Buffer.from(b64auth, "base64")

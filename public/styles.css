@@ -79,11 +79,12 @@ li {
 }
 
 form {
+	padding: 2vw;
 	margin: 20px 5vw;
-	height: 900px;
 	display: flex;
 	flex-direction: column;
 	align-items: start;
+	overflow: visible;
 }
 
 input {
