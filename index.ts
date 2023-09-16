@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { MongoClient } from "mongodb";
 const app = express();
 if (!Bun.env.MONGODB_URI) {
@@ -21,13 +21,19 @@ app.use((req, res, next) => {
 	}
 
 	// Access denied...
-	res.set("WWW-Authenticate", 'Basic realm="401"'); // change this
-	res.status(401).send("Authentication required."); // custom message
-
-	// -----------------------------------------------------------------------
+	res.set("WWW-Authenticate", 'Basic realm="401"');
+	res.status(401).send("Authentication required.");
 });
 
-app.get("/", (req, res) => {
+async function getEvents(req: Request, res: Response, next: NextFunction) {
+	const client = await new MongoClient(Bun.env.MONGODB_URI || "");
+	const events = await client.db("Zok").collection("Calendar").find().toArray();
+	res.locals.events = events;
+	await client.close();
+	next();
+}
+
+app.get("/", getEvents, (req, res) => {
 	res.render("admin");
 });
 app.post(
@@ -37,20 +43,33 @@ app.post(
 		const item = req.body;
 		const mongoClient = await new MongoClient(Bun.env.MONGODB_URI || "");
 		const db = mongoClient.db("Zok").collection("Calendar");
-		await db.insertOne({
-			title: item.title,
-			name: item.name,
-			img: item.img,
-			date: item.date,
-			time: item.timeBegin + " - " + item.timeEnd,
-			descr: item.descr.replaceAll("\r\n", "<br>"),
-			location: item.location,
-		});
+		if (
+			!item.title ||
+			!item.name ||
+			!item.img ||
+			!item.date ||
+			!item.timeBegin ||
+			!item.timeEnd ||
+			!item.descr ||
+			!item.location
+		) {
+			res.send("Please fill all fields");
+		} else {
+			await db.insertOne({
+				title: item.title,
+				name: item.name,
+				img: item.img,
+				date: item.date,
+				time: item.timeBegin + " - " + item.timeEnd,
+				descr: item.descr.replaceAll("\r\n", "<br>"),
+				location: item.location,
+			});
+		}
 		await mongoClient.close();
 		next();
 	},
 	(req, res) => {
-		res.render("admin");
+		res.get("/");
 	}
 );
 
